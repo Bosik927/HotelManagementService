@@ -26,6 +26,7 @@ public class UserController {
     public @ResponseBody
     String addNewOrder() {
         UserEntity userEntity = new UserEntity();
+        /*TODO: Check what is necessary*/
 //        userEntity.setAccounttypesByAccountTypeId();
 //        userEntity.setCardNumber();
 //        userEntity.setName();

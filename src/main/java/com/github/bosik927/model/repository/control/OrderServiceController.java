@@ -26,6 +26,7 @@ public class OrderServiceController {
     public @ResponseBody
     String addNewOrder() {
         OrderServiceEntity orderServiceEntity = new OrderServiceEntity();
+        /*TODO: Check what is necessary*/
         //orderServiceEntity.setOrdersByOrderId();
         //orderServiceEntity.setOrderServiceId();
         orderServiceRepository.save(orderServiceEntity);
