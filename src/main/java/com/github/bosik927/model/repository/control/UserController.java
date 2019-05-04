@@ -1,49 +1,56 @@
 package com.github.bosik927.model.repository.control;
 
+import com.github.bosik927.model.repository.boundary.AccountTypeRepository;
+import com.github.bosik927.model.repository.boundary.EntityNotFoundException;
 import com.github.bosik927.model.repository.boundary.UserRepository;
+import com.github.bosik927.model.repository.entity.AccountTypeEntity;
 import com.github.bosik927.model.repository.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-import static com.github.bosik927.model.repository.control.UserController.USER_BASIC_PATH;
-
-@Controller
-@RequestMapping(path = USER_BASIC_PATH)
+@RestController
 public class UserController {
 
-    public static final String USER_BASIC_PATH = "/user";
+    private static final String USER = "User";
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
-    @GetMapping(path ="/add")
-    public @ResponseBody
-    String addNewOrder() {
-        UserEntity userEntity = new UserEntity();
-        /*TODO: Check what is necessary*/
-//        userEntity.setAccounttypesByAccountTypeId();
-//        userEntity.setCardNumber();
-//        userEntity.setName();
-//        userEntity.setSurname();
-        userRepository.save(userEntity);
-        return "SAVED";
-    }
-
-    @GetMapping(path = "/getAll")
-    public @ResponseBody
-    Iterable<UserEntity> getAllUsers() {
+    @GetMapping(path = "/users")
+    public Iterable<UserEntity> getAll() {
         return userRepository.findAll();
     }
 
-    @GetMapping(path = "/getById")
-    public @ResponseBody
-    Optional<UserEntity> getById(@RequestParam Integer id) {
-        return userRepository.findById(id);
+    @GetMapping(path = "/users/{id}")
+    public UserEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, USER));
+    }
+
+    @PostMapping(path = "/users")
+    public UserEntity add(@RequestBody UserEntity accountType) {
+        return userRepository.save(accountType);
+    }
+
+    @PutMapping("/users/{id}")
+    public UserEntity replace(@RequestBody UserEntity newUserEntity,
+                              @PathVariable Integer id) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setName(newUserEntity.getName());
+                    return userRepository.save(newUserEntity);
+                })
+                .orElseGet(() -> {
+                    newUserEntity.setUserId(id);
+                    return userRepository.save(newUserEntity);
+                });
+    }
+
+    @DeleteMapping("/users/{id}")
+    void delete(@PathVariable Integer id) {
+        userRepository.deleteById(id);
     }
 }

@@ -1,47 +1,60 @@
 package com.github.bosik927.model.repository.control;
 
-import com.github.bosik927.model.repository.boundary.OrderRepository;
-import com.github.bosik927.model.repository.entity.OrderEntity;
+import com.github.bosik927.model.repository.boundary.EntityNotFoundException;
+import com.github.bosik927.model.repository.boundary.ServiceRepository;
+import com.github.bosik927.model.repository.entity.ServiceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
-import static com.github.bosik927.model.repository.control.ServiceController.SERVICE_BASIC_PATH;
-
-@Controller
-@RequestMapping(path = SERVICE_BASIC_PATH)
+@RestController
 public class ServiceController {
 
-    public static final String SERVICE_BASIC_PATH = "/service";
+    private static final String SERVICE = "Service";
 
     @Autowired
-    private OrderRepository orderRepository;
+    ServiceRepository serviceRepository;
 
-    @GetMapping(path ="/add")
-    public @ResponseBody
-    String addNewOrder() {
-        OrderEntity orderEntity = new OrderEntity();
-        /*TODO: Check what is necessary*/
-//        orderEntity.setData();
-//        orderEntity.setOrderId();
-        orderRepository.save(orderEntity);
-        return "SAVED";
+    @GetMapping(path = "/services")
+    public Iterable<ServiceEntity> getAll() {
+        return serviceRepository.findAll();
     }
 
-    @GetMapping(path = "/getAll")
-    public @ResponseBody
-    Iterable<OrderEntity> getAllUsers() {
-        return orderRepository.findAll();
+    @GetMapping(path = "/services/{id}")
+    public ServiceEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
+        return serviceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, SERVICE));
     }
 
-    @GetMapping(path = "/getById")
-    public @ResponseBody
-    Optional<OrderEntity> getById(@RequestParam Integer id) {
-        return orderRepository.findById(id);
+    @PostMapping(path = "/services")
+    public ServiceEntity add(@RequestBody ServiceEntity serviceEntity) {
+        return serviceRepository.save(serviceEntity);
+    }
+
+    @PutMapping("/services/{id}")
+    public ServiceEntity replace(@RequestBody ServiceEntity newServiceEntity,
+                              @PathVariable Integer id) {
+        return serviceRepository.findById(id)
+                .map(user -> {
+                    user.setServiceId(newServiceEntity.getServiceId());
+                    user.setAccountTypeByAvailabilityId(newServiceEntity.getAccountTypeByAvailabilityId());
+                    user.setName(newServiceEntity.getName());
+                    user.setPrice(newServiceEntity.getPrice());
+                    return serviceRepository.save(newServiceEntity);
+                })
+                .orElseGet(() -> {
+                    newServiceEntity.setServiceId(id);
+                    return serviceRepository.save(newServiceEntity);
+                });
+    }
+
+    @DeleteMapping("/services/{id}")
+    void delete(@PathVariable Integer id) {
+        serviceRepository.deleteById(id);
     }
 }
