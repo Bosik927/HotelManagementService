@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  database:
+    image: mariadb/server:10.3
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=admin
+    ports:
+      - 3307:3306
+
+  api:
+    image: andrzejd/hms:1.1
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+    restart: on-failure:5
