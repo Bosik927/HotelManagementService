@@ -2,7 +2,7 @@ package com.github.bosik927.model.repository.control;
 
 import com.github.bosik927.model.repository.boundary.EntityNotFoundException;
 import com.github.bosik927.model.repository.boundary.ServiceRepository;
-import com.github.bosik927.model.repository.entity.ServiceEntity;
+import com.github.bosik927.model.repository.entity.ServicesEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,28 +21,26 @@ public class ServiceController {
     ServiceRepository serviceRepository;
 
     @GetMapping(path = "/services")
-    public Iterable<ServiceEntity> getAll() {
+    public Iterable<ServicesEntity> getAll() {
         return serviceRepository.findAll();
     }
 
     @GetMapping(path = "/services/{id}")
-    public ServiceEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
+    public ServicesEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
         return serviceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(id, SERVICE));
     }
 
     @PostMapping(path = "/services")
-    public ServiceEntity add(@RequestBody ServiceEntity serviceEntity) {
+    public ServicesEntity add(@RequestBody ServicesEntity serviceEntity) {
         return serviceRepository.save(serviceEntity);
     }
 
     @PutMapping("/services/{id}")
-    public ServiceEntity replace(@RequestBody ServiceEntity newServiceEntity,
+    public ServicesEntity replace(@RequestBody ServicesEntity newServiceEntity,
                               @PathVariable Integer id) {
         return serviceRepository.findById(id)
                 .map(user -> {
-                    user.setServiceId(newServiceEntity.getServiceId());
-                    user.setAccountTypeByAvailabilityId(newServiceEntity.getAccountTypeByAvailabilityId());
                     user.setName(newServiceEntity.getName());
                     user.setPrice(newServiceEntity.getPrice());
                     return serviceRepository.save(newServiceEntity);

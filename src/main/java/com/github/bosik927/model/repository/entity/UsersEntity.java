@@ -1,26 +1,18 @@
 package com.github.bosik927.model.repository.entity;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.util.Objects;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "users", schema = "hotel_db", catalog = "")
-public class UserEntity {
-
+public class UsersEntity {
     private int userId;
+    private String accountType;
     private String name;
     private String surname;
     private Integer cardNumber;
-    private AccountTypeEntity accounttypesByAccountTypeId;
 
     @Id
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id")
     public int getUserId() {
         return userId;
     }
@@ -30,7 +22,17 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "account_type")
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    @Basic
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -40,7 +42,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "surname", nullable = true, length = 255)
+    @Column(name = "surname")
     public String getSurname() {
         return surname;
     }
@@ -50,7 +52,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "cardNumber", nullable = true)
+    @Column(name = "card_number")
     public Integer getCardNumber() {
         return cardNumber;
     }
@@ -64,30 +66,24 @@ public class UserEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserEntity that = (UserEntity) o;
+        UsersEntity that = (UsersEntity) o;
 
         if (userId != that.userId) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(surname, that.surname)) return false;
-        return Objects.equals(cardNumber, that.cardNumber);
+        if (accountType != null ? !accountType.equals(that.accountType) : that.accountType != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (surname != null ? !surname.equals(that.surname) : that.surname != null) return false;
+        if (cardNumber != null ? !cardNumber.equals(that.cardNumber) : that.cardNumber != null) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = userId;
+        result = 31 * result + (accountType != null ? accountType.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (surname != null ? surname.hashCode() : 0);
         result = 31 * result + (cardNumber != null ? cardNumber.hashCode() : 0);
         return result;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "accountTypeId", referencedColumnName = "accountId", nullable = false)
-    public AccountTypeEntity getAccounttypesByAccountTypeId() {
-        return accounttypesByAccountTypeId;
-    }
-
-    public void setAccounttypesByAccountTypeId(AccountTypeEntity accounttypesByAccountTypeId) {
-        this.accounttypesByAccountTypeId = accounttypesByAccountTypeId;
     }
 }

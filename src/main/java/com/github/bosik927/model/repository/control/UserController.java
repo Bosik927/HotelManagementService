@@ -1,15 +1,10 @@
 package com.github.bosik927.model.repository.control;
 
-import com.github.bosik927.model.repository.boundary.AccountTypeRepository;
 import com.github.bosik927.model.repository.boundary.EntityNotFoundException;
 import com.github.bosik927.model.repository.boundary.UserRepository;
-import com.github.bosik927.model.repository.entity.AccountTypeEntity;
-import com.github.bosik927.model.repository.entity.UserEntity;
+import com.github.bosik927.model.repository.entity.UsersEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -20,23 +15,23 @@ public class UserController {
     UserRepository userRepository;
 
     @GetMapping(path = "/users")
-    public Iterable<UserEntity> getAll() {
+    public Iterable<UsersEntity> getAll() {
         return userRepository.findAll();
     }
 
     @GetMapping(path = "/users/{id}")
-    public UserEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
+    public UsersEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(id, USER));
     }
 
     @PostMapping(path = "/users")
-    public UserEntity add(@RequestBody UserEntity accountType) {
+    public UsersEntity add(@RequestBody UsersEntity accountType) {
         return userRepository.save(accountType);
     }
 
     @PutMapping("/users/{id}")
-    public UserEntity replace(@RequestBody UserEntity newUserEntity,
+    public UsersEntity replace(@RequestBody UsersEntity newUserEntity,
                               @PathVariable Integer id) {
         return userRepository.findById(id)
                 .map(user -> {

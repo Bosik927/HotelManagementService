@@ -35,7 +35,8 @@ public class OrderServiceController {
                                @PathVariable Integer id) {
         return orderServiceRepository.findById(id)
                 .map(orderService -> {
-                    orderService.setOrdersByOrderId(newOrderServiceEntity.getOrdersByOrderId());
+                    orderService.setOrderId(newOrderServiceEntity.getOrderId());
+                    orderService.setServiceId(newOrderServiceEntity.getServiceId() );
                     return orderServiceRepository.save(orderService);
                 })
                 .orElseGet(() -> {

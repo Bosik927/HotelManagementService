@@ -1,27 +1,42 @@
 package com.github.bosik927.model.repository.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "orderservice", schema = "hotel_db", catalog = "")
+@Table(name = "order_service", schema = "hotel_db", catalog = "")
 public class OrderServiceEntity {
-
     private int orderServiceId;
-    private OrderEntity ordersByOrderId;
+    private int orderId;
+    private int serviceId;
 
     @Id
-    @Column(name = "OrderServiceId", nullable = false)
+    @Column(name = "order_service_id")
     public int getOrderServiceId() {
         return orderServiceId;
     }
 
     public void setOrderServiceId(int orderServiceId) {
         this.orderServiceId = orderServiceId;
+    }
+
+    @Basic
+    @Column(name = "order_id")
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    @Basic
+    @Column(name = "service_id")
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 
     @Override
@@ -31,21 +46,18 @@ public class OrderServiceEntity {
 
         OrderServiceEntity that = (OrderServiceEntity) o;
 
-        return orderServiceId == that.orderServiceId;
+        if (orderServiceId != that.orderServiceId) return false;
+        if (orderId != that.orderId) return false;
+        if (serviceId != that.serviceId) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return orderServiceId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "OrderId", referencedColumnName = "orderId", nullable = false)
-    public OrderEntity getOrdersByOrderId() {
-        return ordersByOrderId;
-    }
-
-    public void setOrdersByOrderId(OrderEntity ordersByOrderId) {
-        this.ordersByOrderId = ordersByOrderId;
+        int result = orderServiceId;
+        result = 31 * result + orderId;
+        result = 31 * result + serviceId;
+        return result;
     }
 }

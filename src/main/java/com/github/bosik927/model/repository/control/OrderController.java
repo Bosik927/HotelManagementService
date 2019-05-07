@@ -2,7 +2,7 @@ package com.github.bosik927.model.repository.control;
 
 import com.github.bosik927.model.repository.boundary.EntityNotFoundException;
 import com.github.bosik927.model.repository.boundary.OrderRepository;
-import com.github.bosik927.model.repository.entity.OrderEntity;
+import com.github.bosik927.model.repository.entity.OrdersEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,23 +21,23 @@ public class OrderController {
     OrderRepository orderRepository;
 
     @GetMapping(path = "/orders")
-    public Iterable<OrderEntity> getAll() {
+    public Iterable<OrdersEntity> getAll() {
         return orderRepository.findAll();
     }
 
     @GetMapping(path = "/orders/{id}")
-    public OrderEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
+    public OrdersEntity getById(@PathVariable Integer id) throws EntityNotFoundException {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(id, ORDER));
     }
 
     @PostMapping(path = "/orders")
-    public OrderEntity add(@RequestBody OrderEntity orderEntity) {
+    public OrdersEntity add(@RequestBody OrdersEntity orderEntity) {
         return orderRepository.save(orderEntity);
     }
 
     @PutMapping("/orders/{id}")
-    public OrderEntity replace(@RequestBody OrderEntity newOrderEntity,
+    public OrdersEntity replace(@RequestBody OrdersEntity newOrderEntity,
                                  @PathVariable Integer id) {
         return orderRepository.findById(id)
                 .map(order -> {
