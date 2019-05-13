@@ -2,18 +2,21 @@ version: '3.3'
 
 services:
   database:
-    image: mariadb/server:10.3
+    image: andrzejd/hms-database:latest
     volumes:
       - ./data/mysql:/var/lib/mysql
     environment:
       - MARIADB_ROOT_PASSWORD=admin
-    ports:
-      - 3307:3306
 
   api:
-    image: andrzejd/hms:1.1
+    image: andrzejd/hms:1.12
     ports:
       - 8080:8080
     depends_on:
       - database
+    environment:
+      SPRING_APPLICATION_JSON:
+        '{"spring": {"datasource": {"url": "jdbc:mysql://database:3306/hotel_db?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false", "username": "root", "password": "admin"}}}'
     restart: on-failure:5
+    links:
+      - database

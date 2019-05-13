@@ -9,3 +9,7 @@ target/
 
 # Mac
 .DS_Store
+
+.jar
+
+.env
