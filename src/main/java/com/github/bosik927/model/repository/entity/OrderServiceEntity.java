@@ -10,6 +10,7 @@ public class OrderServiceEntity {
     private int serviceId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_service_id")
     public int getOrderServiceId() {
         return orderServiceId;
