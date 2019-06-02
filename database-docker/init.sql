@@ -18,13 +18,11 @@ insert into users value
 
 create table if not exists orders
 (
-  order_id int not null,
-  user_id  int not null,
-  data     DATETIME,
-  PRIMARY KEY (order_id),
-  FOREIGN KEY (user_id) REFERENCES users (user_id)
+    order_id serial primary key  not null,
+    user_id int not null,
+    data DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
-
 
 insert into orders value
   (1, 1, '2019-04-23 01:01:01'), (2, 1, '2019-04-23 01:01:02'), (3, 2, '2019-04-23 02:02:02'),
@@ -43,10 +41,9 @@ insert into services value
 
 create table if not exists order_service
 (
-  order_service_id int not null,
+  order_service_id serial primary key,
   order_id         int not null,
   service_id       int not null,
-  PRIMARY KEY (order_service_id),
   FOREIGN KEY (order_id) REFERENCES orders (order_id),
   FOREIGN KEY (service_id) REFERENCES services (service_id)
 );
