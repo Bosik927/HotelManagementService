@@ -10,6 +10,7 @@ public class ServicesEntity {
     private Double price;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "service_id")
     public int getServiceId() {
         return serviceId;
