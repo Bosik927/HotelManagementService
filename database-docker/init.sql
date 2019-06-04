@@ -42,7 +42,7 @@ insert into services value
 create table if not exists order_service
 (
   order_service_id serial primary key,
-  order_id         int not null,
+  order_id         BIGINT UNSIGNED not null,
   service_id       int not null,
   FOREIGN KEY (order_id) REFERENCES orders (order_id),
   FOREIGN KEY (service_id) REFERENCES services (service_id)
