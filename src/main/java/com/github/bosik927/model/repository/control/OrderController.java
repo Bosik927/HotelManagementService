@@ -6,6 +6,7 @@ import com.github.bosik927.model.repository.boundary.OrderServiceRepository;
 import com.github.bosik927.model.repository.entity.Order;
 import com.github.bosik927.model.repository.entity.OrderServiceEntity;
 import com.github.bosik927.model.repository.entity.OrdersEntity;
+import com.github.bosik927.model.repository.entity.ServicesEntity;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,14 +52,23 @@ public class OrderController {
         orderEntity.setData(now);
 
         orderRepository.save(orderEntity);
-        order.getServices()
-                .stream()
-                .map(serviceId -> {
-                    OrderServiceEntity orderServiceEntity = new OrderServiceEntity();
-                    orderServiceEntity.setServiceId(serviceId);
-                    orderServiceEntity.setOrderId(1);
-                    return orderServiceEntity;
-                }).forEach(entity ->orderServiceRepository.save(entity));
+        Iterable<OrdersEntity> orders = orderRepository.findAll();
+
+        OrdersEntity lastElement = null;
+
+        for (OrdersEntity element : orders) {
+            lastElement = element;
+        }
+
+        Iterable<Integer> services = order.getServices();
+
+        for (Integer id : services){
+            OrderServiceEntity orderServiceEntity = new OrderServiceEntity();
+            orderServiceEntity.setServiceId(id);
+            orderServiceEntity.setOrderId(lastElement.getOrderId());
+            orderServiceRepository.save(orderServiceEntity);
+        }
+
         return "Done";
     }
 
