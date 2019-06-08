@@ -3,6 +3,7 @@ package com.github.bosik927.model.repository.control;
 import com.github.bosik927.model.repository.boundary.EntityNotFoundException;
 import com.github.bosik927.model.repository.boundary.OrderRepository;
 import com.github.bosik927.model.repository.boundary.OrderServiceRepository;
+import com.github.bosik927.model.repository.boundary.ServiceRepository;
 import com.github.bosik927.model.repository.entity.Order;
 import com.github.bosik927.model.repository.entity.OrderServiceEntity;
 import com.github.bosik927.model.repository.entity.OrdersEntity;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrderController {
@@ -28,10 +32,37 @@ public class OrderController {
     OrderRepository orderRepository;
     @Autowired
     OrderServiceRepository orderServiceRepository;
+    @Autowired
+    ServiceRepository serviceRepository;
 
     @GetMapping(path = "/orders")
     public Iterable<OrdersEntity> getAll() {
         return orderRepository.findAll();
+    }
+
+    @GetMapping(path = "/orders/service/{orderId}")
+    public List<ServicesEntity> getOrderServices(@PathVariable Integer orderId) throws EntityNotFoundException {
+        Iterable<OrderServiceEntity> source = orderServiceRepository.findAll();
+        List<OrderServiceEntity> target = new ArrayList<>();
+        source.forEach(target::add);
+
+        List<Integer> servicesIds = target.stream().filter(orderService -> orderService.getOrderId() == orderId)
+                .map(OrderServiceEntity::getServiceId)
+                .collect(Collectors.toList());
+
+        List<ServicesEntity> services = new ArrayList<>();
+        servicesIds.forEach(id -> services.add(serviceRepository.findById(id).get()));
+        return services;
+    }
+
+    @GetMapping(path = "/orders/user{userId}")
+    public List<OrdersEntity> getByUserId(@PathVariable Integer userId){
+        Iterable<OrdersEntity> source = orderRepository.findAll();
+        List<OrdersEntity> target = new ArrayList<>();
+        source.forEach(target::add);
+
+        return target.stream().filter(order->order.getUserId()==userId)
+                .collect(Collectors.toList());
     }
 
     @GetMapping(path = "/orders/{id}")
